@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: my-odessajs-app
+  name: nodeserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-odessajs-app
+  template:
+    metadata:
+      labels:
+        app: my-odessajs-app
+    spec:
+      containers:
+      - image: maltez/odessa:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        name: hello-world
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 3
+            failureThreshold: 5
+            periodSeconds: 2
+            timeoutSeconds: 2
+        readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 2
+        ports:
+        - containerPort: 3000
